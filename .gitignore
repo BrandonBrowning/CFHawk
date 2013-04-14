@@ -1,5 +1,17 @@
 *.py[cod]
 
+# Ignore all the virtualenv stuff except the actual packages
+/bin
+/include
+/lib/python*/*
+!/lib/python*/site-packages
+
+# Ignore easyinstall and setuptools
+/lib/python*/site-packages/easy-install.pth
+/lib/python*/site-packages/setuptools.pth
+/lib/python*/site-packages/setuptools-*
+/lib/python*/site-packages/pip-*
+
 # C extensions
 *.so
 
