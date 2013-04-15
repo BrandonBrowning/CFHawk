@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from scrape import gen_submissions, Problem, StudentWeek
 from wheezy.template.engine import Engine
 from wheezy.template.ext.core import CoreExtension
@@ -24,6 +25,7 @@ def gen_correct_problem_mapping(submissions, week_problemids):
 	accepted_submissions = set([s.problem.problemid for s in submissions if s.verdict == 'Accepted'])
 	for problemid in week_problemids:
 		completed = problemid in accepted_submissions
+
 		yield (problemid, completed, completed_to_icon_html(completed))
 
 profile_names = ['ermiar', 'DrChickenSalad']
@@ -34,7 +36,6 @@ def gen_people(profile_names, week_problem):
 		correct_mapping = gen_correct_problem_mapping(submissions, week_problemids)
 		student_week = StudentWeek(person, sorted(correct_mapping))
 
-		print('{0}: {1}'.format(student_week.name, student_week.correct))
 		yield student_week
 
 people = list(gen_people(profile_names, week_problems))
@@ -49,3 +50,6 @@ render_values = {
 
 with open('output/index.html', 'w') as f:
 	f.write(index_template.render(render_values))
+
+with open('output/last_modified.json', 'w') as f:
+	f.write('"{0}"'.format(datetime.today().strftime("%Y-%m-%d %H:%M:%S")))

@@ -4,14 +4,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>@title</title>
-	@for script in js:
-		<script src="@script"></script>
-	@end
+	<title>ACMUA - SIGCOMP - Leaderboard</title>
 
-	@for stylesheet in css:
-		<link rel="stylesheet" href="@stylesheet">
-	@end
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/site.css">
 </head>
 <body>
 	<div class="container-narrow">
@@ -45,6 +42,9 @@
 			<hr class="thin"/>
 			<br/>
 			<p id="pretty-last-updated"/>
+			
+			<script src="js/jquery.min.js"></script>
+			<script src="js/site.js"></script>
 			<script>
 				var page_first_loaded = new Date();
 
