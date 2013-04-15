@@ -1,0 +1,71 @@
+@require(title, css, js, winner_text, week_problems, people)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>@title</title>
+	@for script in js:
+		<script src="@script"></script>
+	@end
+
+	@for stylesheet in css:
+		<link rel="stylesheet" href="@stylesheet">
+	@end
+</head>
+<body>
+	<div class="container-narrow">
+		<div class="jumbotron">
+			<h1>@winner_text</h1>
+			<br/><br/><br/>
+			
+			<table class="table">
+				<thead>
+					<th></th>
+					@for problem in week_problems:
+						<th>
+							<a href="@problem.url">@problem.urlname - @problem.name</a>
+						</th>
+					@end
+				</thead>
+				<tbody>
+					@for person in people:
+						<tr>
+							<td>
+								<h3><a href="@person.url">@person.name</a></h3>
+							</td>
+							@for problemid, correct, icon in person.correct:
+								<td>@icon</td>
+							@end
+						</tr>
+					@end
+				</tbody>
+			</table>
+
+			<hr class="thin"/>
+			<br/>
+			<p id="pretty-last-updated"/>
+			<script>
+				var page_first_loaded = new Date();
+
+				function update_last_updated() {
+					$.getJSON('last_modified.json', function(data) {
+						var last_modified = new Date(data);
+
+						if (last_modified > page_first_loaded) {
+							document.location.reload(true);
+						} else {
+							$("#pretty-last-updated").text("Statistics were last updated " + prettyDate(data));
+						}
+					});
+				}
+
+				$(function() {
+					setInterval(update_last_updated, 10 * 60 * 1000);
+					update_last_updated();
+				});
+			</script>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,12 +1,16 @@
 *.py[cod]
 
-# Ignore all the virtualenv stuff except the actual packages
+# Rendered output
+output/*.html
+output/last_modified.json
+
+# All the virtualenv stuff except the actual packages
 /bin
 /include
 /lib/python*/*
 !/lib/python*/site-packages
 
-# Ignore easyinstall and setuptools
+# Easyinstall and setuptools
 /lib/python*/site-packages/easy-install.pth
 /lib/python*/site-packages/setuptools.pth
 /lib/python*/site-packages/setuptools-*
