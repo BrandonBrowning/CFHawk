@@ -1,5 +1,8 @@
 
+import os
 from datetime import datetime
+
+from config import *
 from scrape import gen_submissions, Problem, StudentWeek
 from wheezy.template.engine import Engine
 from wheezy.template.ext.core import CoreExtension
@@ -48,8 +51,11 @@ render_values = {
 	'people': people
 }
 
-with open('output/index.html', 'w') as f:
+def output_file(filename):
+	return os.path.join(config_output_directory, filename)
+
+with open(output_file('index.html'), 'w') as f:
 	f.write(index_template.render(render_values))
 
-with open('output/last_modified.json', 'w') as f:
+with open(output_file('last_modified.json'), 'w') as f:
 	f.write('"{0}"'.format(datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
