@@ -18,7 +18,7 @@ engine = Engine(loader=FileLoader([template_path]), extensions=[CoreExtension()]
 
 index_template = engine.get_template('index.html')
 
-week_problems_unsorted = [Problem(1798, ('223', 'C'), 'Partial Sums'), Problem(969, ('158', 'A'), 'Next Round')]
+week_problems_unsorted = [Problem(2702, ('279', 'B'), 'Books'), Problem(35996, ('580', 'B'), 'Kefa and Company'), Problem(1013, ('165', 'B'), 'Burning Midnight Oil')]
 week_problems = set(sorted(week_problems_unsorted, key=lambda p: p.problemid))
 
 def completed_to_icon_html(correct):
@@ -31,7 +31,7 @@ def gen_correct_problem_mapping(submissions, week_problemids):
 
 		yield (problemid, completed, completed_to_icon_html(completed))
 
-profile_names = ['ermiar', 'DrChickenSalad']
+profile_names = ['ermiar', 'DrChickenSalad', 't.wynn', 'anb288']
 def gen_people(profile_names, week_problem):
 	week_problemids = [p.problemid for p in week_problems]
 	for person in profile_names:
@@ -41,7 +41,7 @@ def gen_people(profile_names, week_problem):
 
 		yield student_week
 
-people = list(gen_people(profile_names, week_problems))
+people = list(sorted(gen_people(profile_names, week_problems), key=lambda sw: sum(map(lambda t: -t[1], sw.correct))))
 render_values = {
 	'title': title,
 	'css': css,

@@ -80,9 +80,9 @@ def gen_submissions(username):
 		result.submissionid = int(extract_string(submission, 'td[1]/a/text()'))
 		result.date = extract_string(submission, 'td[2]/text()')
 		result.language = extract_string(submission, 'td[5]/text()')
-		result.verdict = serialize_verdict(extract_string(submission, 'td[6]/span/@class'))
-		result.time = int(extract_string(submission, 'td[7]/text()').replace(' ms', ''))
-		result.memory = int(extract_string(submission, 'td[8]/text()').replace(' KB', ''))
+		result.verdict = serialize_verdict(extract_string(submission, 'td[6]/span/span/@class'))
+		result.time = int(extract_string(submission, 'td[7]/text()').replace('ms', '').strip())
+		result.memory = int(extract_string(submission, 'td[8]/text()').replace('KB', '').strip())
 
 		problem = Problem()
 		problem.problemid = int(extract_string(submission, 'td[4]/@data-problemid'))
