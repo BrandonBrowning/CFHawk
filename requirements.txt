@@ -1,3 +1,4 @@
 lxml==3.1.2
 wheezy.template==0.1.135
 wsgiref==0.1.2
+toml==0.9.1

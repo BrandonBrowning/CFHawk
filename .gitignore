@@ -1,8 +1,13 @@
-*.py[cod]
+
+# Configuration file
+config.toml
 
 # Rendered output
 output/*.html
 output/last_modified.json
+
+# Build artifacts
+*.py[cod]
 
 # All the virtualenv stuff except the actual packages
 /bin
