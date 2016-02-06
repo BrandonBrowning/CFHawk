@@ -1,6 +1,15 @@
+
 body {
 	padding-top: 20px;
 	padding-bottom: 40px;
+}
+
+.announcement {
+    margin-bottom: 60px;
+}
+
+.table tbody td {
+    vertical-align: middle;
 }
 
 /* Custom container */

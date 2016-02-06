@@ -13,7 +13,7 @@ Ubuntu
 
 Not fully tested, but this is the general idea
 
-    sudo apt-get install python python-pip libxml2-dev libxslt1-dev python-dev
+    sudo apt-get install python python-pip
     sudo pip install -r requirements.txt
 
 
@@ -37,36 +37,38 @@ Create a file resembling the following at `config.toml`
 
 ```
 [ui]
-title = "ACMUA - SIGCOMP - Scoreboard"
+announcement = "SIGCOMP Scoreboard"
+title = "SIGCOMP Scoreboard"
 
 [template]
 input_path = "template"
 output_path = "output"
 index_local_path = "index.html"
 
-[[problems]]
-id = 41188
-set = "599"
+[week]
+contest_id = "618"
+
+[[week.problems]]
 letter = "A"
-name = "Patrick and Shopping"
+name = "Slime Combining"
 
-[[problems]]
-id = 41189
-set = "599"
+[[week.problems]]
 letter = "B"
-name = "Spongebob and Joke"
+name = "Guess the Permutation"
 
-[[problems]]
-id = 41190
-set = "599"
+[[week.problems]]
 letter = "C"
-name = "Day at the Beach"
+name = "Constellation"
 
-[[problems]]
-id = 41191
-set = "599"
+[[week.problems]]
+set = "618"
 letter = "D"
-name = "Spongebob and Squares"
+name = "Hamiltonian Spanning Tree"
+
+[[week.problems]]
+set = "618"
+letter = "E"
+name = "Robot Arm"
 
 [[people]]
 handle = "t.wynn"

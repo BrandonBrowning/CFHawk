@@ -1,63 +1,72 @@
 #!/usr/bin/env python2
 
-import os
-from datetime import datetime
+import api
+from model import Person, Problem
 
+import hashlib
+import os
 import toml
+from datetime import datetime
 from easydict import EasyDict as edict
-from scrape import gen_submissions, Problem, StudentWeek
 from wheezy.template.engine import Engine
 from wheezy.template.ext.core import CoreExtension
 from wheezy.template.loader import FileLoader
 
+def calculate_sha1(s):
+    sha1 = hashlib.sha1()
+    sha1.update(s)
+
+    return sha1.digest()
+
+def log(s):
+    print('[%s] %s' % (datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'), s))
+
 with open('config.toml') as f:
     config = edict(toml.loads(f.read()))
 
+announcement = config.ui.announcement
 title = config.ui.title
-css = ["css/bootstrap.min.css", "css/font-awesome.min.css", "css/site.css"]
-js = ["js/jquery.min.js", "http://d3js.org/d3.v3.min.js", "js/site.js"]
-winner_text = 'TODO Winner Text!'
+people = [Person(p.handle, p.name) for p in config.people]
+problems = [Problem(config.week.contest_id, p.letter, p.name) for p in config.week.problems]
 
-engine = Engine(loader=FileLoader([config.template.input_path]), extensions=[CoreExtension()])
+contest_ids = set(p.contest_id for p in problems)
+assert len(contest_ids) == 1
+contest_id = int(contest_ids.pop())
+
+solves = dict()
+for person in people:
+    response = api.get_user_contest_submissions(person.handle, contest_id)
+    solves[person] = set(s.problem.index for s in response if s.problem.contestId == contest_id and s.verdict == 'OK')
+
+people = sorted(people, key=lambda p: len(solves[p]), reverse=True)
+
+template_input_path = config.template.input_path
+engine = Engine(
+    loader=FileLoader([template_input_path]),
+    extensions=[CoreExtension()])
+
 index_template = engine.get_template(config.template.index_local_path)
-
-week_problems = [Problem(p.id, (p.set, p.letter), p.name) for p in config.problems]
-
-def completed_to_icon_html(correct):
-	return "<i class=\"{0} icon-3x\"></i>".format("icon-ok" if correct else "icon-remove")
-
-def gen_correct_problem_mapping(submissions, week_problemids):
-	accepted_submissions = set([s.problem.problemid for s in submissions if s.verdict == 'Accepted'])
-	for problemid in week_problemids:
-		completed = problemid in accepted_submissions
-
-		yield (problemid, completed, completed_to_icon_html(completed))
-
-profile_names = [person.handle for person in config.people]
-def gen_people(profile_names, week_problem):
-	week_problemids = [p.problemid for p in week_problems]
-	for person in profile_names:
-		submissions = list(gen_submissions(person))
-		correct_mapping = gen_correct_problem_mapping(submissions, week_problemids)
-		student_week = StudentWeek(person, sorted(correct_mapping))
-
-		yield student_week
-
-people = list(sorted(gen_people(profile_names, week_problems), key=lambda sw: sum(map(lambda t: -t[1], sw.correct))))
-render_values = {
-	'title': title,
-	'css': css,
-	'js': js,
-	'winner_text': winner_text,
-	'week_problems': week_problems,
-	'people': people
+model = {
+    'announcement': announcement,
+    'people': people,
+    'problems': problems,
+    'solves': solves,
+    'title': title
 }
+index_html = index_template.render(model)
 
-def output_file(filename):
-	return os.path.join(config.template.output_path, filename)
+with open(os.path.join(config.template.output_path, 'index.html'), 'r') as f:
+    existing_index_html = f.read()
 
-with open(output_file('index.html'), 'w') as f:
-	f.write(index_template.render(render_values))
+updated_file = calculate_sha1(index_html) != calculate_sha1(existing_index_html)
 
-with open(output_file('last_modified.json'), 'w') as f:
-	f.write('"{0}"'.format(datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+if updated_file:
+    with open(os.path.join(config.template.output_path, 'index.html'), 'w') as f:
+        f.write(index_html)
+
+    with open(os.path.join(config.template.output_path, 'last_modified.json'), 'w') as f:
+        f.write('"%s"' % datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))
+
+    log('Updated to new index.html')
+else:
+    log('No changes to index.html')
