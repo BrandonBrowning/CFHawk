@@ -1,6 +1,7 @@
 
-# Configuration file
+# Configuration files
 config.toml
+problems.toml
 
 # Rendered output
 output/*.html

@@ -24,10 +24,13 @@ def log(s):
 with open('config.toml') as f:
     config = edict(toml.loads(f.read()))
 
+with open('problems.toml') as f:
+    config_problems = edict(toml.loads(f.read())).problems
+
 announcement = config.ui.announcement
 title = config.ui.title
 people = [Person(p.handle, p.name) for p in config.people]
-problems = [Problem(config.week.contest_id, p.letter, p.name) for p in config.week.problems]
+problems = [Problem(str(p.contest_id), p.letter, p.name) for p in config_problems]
 
 contest_ids = set(p.contest_id for p in problems)
 assert len(contest_ids) == 1
